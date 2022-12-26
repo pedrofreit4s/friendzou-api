@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fdz-api-deployment
+  labels:
+    app: fdz-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fdz-api
+  template:
+    metadata:
+      labels:
+        app: fdz-api
+    spec:
+      containers:
+      - name: fdzapi
+        image: pedrofreit4s/fdz-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
