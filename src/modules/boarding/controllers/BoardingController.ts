@@ -31,7 +31,7 @@ export class BoardingController {
         userAlreadyExists.whatsapp,
         `_Olá, ${
           userAlreadyExists.name || "Usuário"
-        }!_\nfoi criada uma conta com o seu número, caso não tenha sido você, desconsidere esta mensagem!\n\n *📤 - use o link*: \nhttps://friendzou.com.br/activate-account/${
+        }!_\nfoi criada uma conta com o seu número, caso não tenha sido você, desconsidere esta mensagem!\n\n *📤 - use o link*: \nhttps://friendzou.com.br/boarding/cadastro/${
           userAlreadyExists.AccountCodes[0].code
         }\n\n _Att, *Friendzou ™*_`
       );
@@ -51,7 +51,7 @@ export class BoardingController {
       user.whatsapp,
       `_Olá, ${
         user.name || "Usuário"
-      }!_\nfoi criada uma conta com o seu número, caso não tenha sido você, desconsidere esta mensagem!\n\n *📤 - use o link*: \nhttps://friendzou.com.br/activate-account/${
+      }!_\nfoi criada uma conta com o seu número, caso não tenha sido você, desconsidere esta mensagem!\n\n *📤 - use o link*: \nhttps://friendzou.com.br/boarding/cadastro/${
         code.code
       }\n\n _Att, *Friendzou ™*_`
     );
