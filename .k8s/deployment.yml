@@ -16,7 +16,28 @@ spec:
         app: api
     spec:
       containers:
-      - name: fdz-api
-        image: pedrofreit4s/fdz-api
-        ports:
-        - containerPort: 8080
+        - name: fdz-api
+          image: pedrofreit4s/fdz-api
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: APP_SECRET
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: DATABASE_URL
+            - name: WA_API_URL
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: WA_API_URL
+            - name: WA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: prod-secret
+                  key: WA_API_KEY
