@@ -44,7 +44,7 @@ model AccountCodes {
 model Localizations {
   id String @id @default(uuid())
 
-  code String @unique
+  code String
   name String
 
   createdAt DateTime @default(now())
