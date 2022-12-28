@@ -22,7 +22,7 @@ export class LocalizationRepository {
     });
   }
   findByCode(code: string): Promise<Localizations | null> {
-    return client.localizations.findUnique({
+    return client.localizations.findFirst({
       where: {
         code,
       },
