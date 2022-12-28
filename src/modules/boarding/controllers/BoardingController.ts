@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
-import { sendWhatsappMessage } from "../../../services/send-whatsapp-message";
-import { IActivateCodeRepositoryContract } from "../../activate-account/repositories/contracts/IActivateCodeRepositoryContract";
-import { IUser } from "../../user/entities/IUser";
 import { IUserRepositoryContract } from "../../user/repositories/contracts/IUserRepositoryContract";
+import { LocalizationRepository } from "../../localizations/repositories/LocalizationRepository";
+import { IActivateCodeRepositoryContract } from "../../activate-account/repositories/contracts/IActivateCodeRepositoryContract";
+import { sendWhatsappMessage } from "../../../services/send-whatsapp-message";
+import { IUser } from "../../user/entities/IUser";
 import { hashSync } from "bcrypt";
+import { ILocalization } from "../../localizations/entities/ILocalization";
 
 export class BoardingController {
   constructor(
     private userRepository: IUserRepositoryContract,
-    private activeCodeRepository: IActivateCodeRepositoryContract
+    private activeCodeRepository: IActivateCodeRepositoryContract,
+    private localizationRepositoy: LocalizationRepository
   ) {}
 
   create = async (request: Request, response: Response): Promise<Response> => {
@@ -79,13 +82,56 @@ export class BoardingController {
         name,
         email,
         password: hashSync(password, 10),
-        isActive: true,
       },
     });
-    await this.activeCodeRepository.delete(code.id);
 
     return response.status(200).send({
       message: "Bem-vindo a nossa plataforma!",
+    });
+  };
+
+  addLocalization = async (request: Request, response: Response): Promise<Response> => {
+    const { code, name } = request.body as ILocalization;
+    const { token } = request.query;
+
+    if (!token || !code || !name)
+      return response
+        .status(400)
+        .send({ message: "Houve um erro ao processar seus dados!" });
+
+    const accessCode = await this.activeCodeRepository.findByCode(token.toString());
+    if (!accessCode)
+      return response.status(404).send({ message: "Código de ativação não encontrado!" });
+
+    const localizationAlreadyExists = await this.localizationRepositoy.findByUserId(
+      accessCode.user.id
+    );
+    if (localizationAlreadyExists)
+      return response.status(400).send({ message: "Localização já selecionada!" });
+
+    await this.localizationRepositoy.create({
+      data: {
+        code,
+        name,
+        user: {
+          connect: {
+            id: accessCode.user.id,
+          },
+        },
+      },
+    });
+    await this.userRepository.update({
+      where: {
+        id: accessCode.user.id,
+      },
+      data: {
+        isActive: true,
+      },
+    });
+    await this.activeCodeRepository.delete(accessCode.id);
+
+    return response.status(200).send({
+      message: "Localização selecionada!",
     });
   };
 }
