@@ -129,6 +129,12 @@ export class BoardingController {
       },
     });
     await this.activeCodeRepository.delete(accessCode.id);
+    await sendWhatsappMessage(
+      accessCode.user.whatsapp,
+      `_Olá, ${
+        accessCode.user.name || "Usuário"
+      }!_\n🪟 Seja bem-vindo a nossa plataforma!\nVocê pode encontrar amigos próximos a você, ou se preferir utilize o nome de usuário para encontrar um amigo e ser encontrado!\n\n _Att, *Friendzou ™*_`
+    );
 
     return response.status(200).send({
       message: "Localização selecionada!",
